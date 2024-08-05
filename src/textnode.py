@@ -1,7 +1,7 @@
 from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TextNode():
-    def __init__(self, text, text_type, url):
+    def __init__(self, text, text_type, url= None):
         self.text = text
         self.text_type = text_type
         self.url = url 
@@ -30,7 +30,7 @@ def text_node_to_html_node(text_node):
 
 def main():
     test = TextNode("This is a text node", "text", None)
-    print(text_node_to_html_node(test).to_html())
+    print(text_node_to_html_node(test).to_html)
 
 if __name__ == "__main__":
     main()
