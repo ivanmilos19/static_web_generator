@@ -51,22 +51,8 @@ class ParentNode(HTMLNode):
 
     
 def main():
-    node = ParentNode(
-        "p",
-        [
-            LeafNode("b", "Bold text"),
-            ParentNode(
-                "div",
-                [
-                    LeafNode("i", "Italic text within div"),
-                    LeafNode(None, "Some more text"),
-                ]
-            ),
-            LeafNode("i", "Italic text outside div"),
-        ],
-    )
-
-    print(node.to_html())
+    leaf = LeafNode(value="This is a text node")
+    print(leaf.to_html())
 
 if __name__ == "__main__":
     main()  

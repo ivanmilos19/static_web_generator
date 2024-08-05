@@ -80,25 +80,20 @@ class TestParentNode(unittest.TestCase):
 
     def test_to_html_nested_children2(self):
         node = ParentNode(
-            tag="p",
-            children=[
-                LeafNode(value="This is a paragraph of text."),
+            "p",
+            [
+                LeafNode("b", "Bold text"),
                 ParentNode(
-                    tag="div",
-                    children=[
-                        LeafNode(value="This is a paragraph of text."),
-                        ParentNode(
-                            tag="div",
-                            children=[
-                                LeafNode(value="This is a paragraph of text."),
-                                LeafNode(value="This is another paragraph of text."),
-                            ]
-                        )
+                    "div",
+                    [
+                        LeafNode("i", "Italic text within div"),
+                        LeafNode(None, "Some more text"),
                     ]
-                )
-            ]
+                ),
+                LeafNode("i", "Italic text outside div"),
+            ],
         )
-        self.assertEqual(node.to_html(), "<p>This is a paragraph of text.<div>This is a paragraph of text.<div>This is a paragraph of text.This is another paragraph of text.</div></div></p>")
+        self.assertEqual(node.to_html(), "<p><b>Bold text</b><div><i>Italic text within div</i>Some more text</div><i>Italic text outside div</i></p>")
             
 
 if __name__ == "__main__":
