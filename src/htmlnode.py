@@ -30,13 +30,42 @@ class LeafNode(HTMLNode):
             return self.value
         return f"<{self.tag}{(' ' + self.props_to_html()) if self.props else ''}>{self.value}</{self.tag}>"
             
+class ParentNode(HTMLNode):
+    def __init__(self, tag=None, children=None, props=None):
+        super().__init__(tag, None, children, props)
+
+    def to_html(self):
+        if self.tag is None:
+            raise ValueError("missing tag argument")
+        elif self.children is None:
+            raise ValueError("missing children argument")
+        
+        html_elemt = f"<{self.tag}>"
+        for node in self.children:
+            html_elemt += f"{node.to_html()}"
+        html_elemt += f"</{self.tag}>"
+        
+        return html_elemt
+        
             
 
     
 def main():
-    # node = HTMLNode("p", "Hello, World!", None, {"href": "https://www.google.com", "target": "_blank",})
-    # print(node)
-    node = LeafNode("p", "This is a paragraph of text.")
+    node = ParentNode(
+        "p",
+        [
+            LeafNode("b", "Bold text"),
+            ParentNode(
+                "div",
+                [
+                    LeafNode("i", "Italic text within div"),
+                    LeafNode(None, "Some more text"),
+                ]
+            ),
+            LeafNode("i", "Italic text outside div"),
+        ],
+    )
+
     print(node.to_html())
 
 if __name__ == "__main__":

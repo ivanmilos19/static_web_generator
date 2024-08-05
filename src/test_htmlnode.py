@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_props_to_html_none(self):
@@ -30,11 +30,76 @@ class TestLeafNode(unittest.TestCase):
 
     def test_to_html_single_prop(self):
         node = LeafNode(tag="a", value="Click me!", props={"href": "https://www.google.com"})
-        self.assertEqual(node.to_html(), '<a href="https://www.google.com" > href="https://www.google.com" <a>')
+        self.assertEqual(node.to_html(), '<a href="https://www.google.com" >Click me!</a>')
 
     def test_to_html_multiple_props(self):
         node = LeafNode(tag="a", value="Click me!", props={"href": "https://www.google.com", "target": "_blank"})
-        self.assertEqual(node.to_html(), '<a href="https://www.google.com" target="_blank" > href="https://www.google.com" target="_blank" <a>')
+        self.assertEqual(node.to_html(), '<a href="https://www.google.com" target="_blank" >Click me!</a>')
+
+
+class TestParentNode(unittest.TestCase):
+    def test_to_html_no_tag(self):
+        node = ParentNode(children=[LeafNode(value="This is a paragraph of text.")])
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html_no_children(self):
+        node = ParentNode(tag="p")
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_to_html_single_child(self):
+        node = ParentNode(tag="p", children=[LeafNode(value="This is a paragraph of text.")])
+        self.assertEqual(node.to_html(), "<p>This is a paragraph of text.</p>")
+
+    def test_to_html_multiple_children(self):
+        node = ParentNode(
+            tag="p",
+            children=[
+                LeafNode(value="This is a paragraph of text."),
+                LeafNode(value="This is another paragraph of text."),
+            ]
+        )
+        self.assertEqual(node.to_html(), "<p>This is a paragraph of text.This is another paragraph of text.</p>")
+    
+    def test_to_html_nested_children(self):
+        node = ParentNode(
+            tag="p",
+            children=[
+                LeafNode(value="This is a paragraph of text."),
+                ParentNode(
+                    tag="div",
+                    children=[
+                        LeafNode(value="This is a paragraph of text."),
+                        LeafNode(value="This is another paragraph of text."),
+                    ]
+                )
+            ]
+        )
+        self.assertEqual(node.to_html(), "<p>This is a paragraph of text.<div>This is a paragraph of text.This is another paragraph of text.</div></p>")
+
+    def test_to_html_nested_children2(self):
+        node = ParentNode(
+            tag="p",
+            children=[
+                LeafNode(value="This is a paragraph of text."),
+                ParentNode(
+                    tag="div",
+                    children=[
+                        LeafNode(value="This is a paragraph of text."),
+                        ParentNode(
+                            tag="div",
+                            children=[
+                                LeafNode(value="This is a paragraph of text."),
+                                LeafNode(value="This is another paragraph of text."),
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+        self.assertEqual(node.to_html(), "<p>This is a paragraph of text.<div>This is a paragraph of text.<div>This is a paragraph of text.This is another paragraph of text.</div></div></p>")
+            
 
 if __name__ == "__main__":
     unittest.main()
